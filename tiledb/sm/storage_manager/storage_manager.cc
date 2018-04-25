@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include "tiledb/sm/global_state/global_state.h"
 #include "tiledb/sm/misc/logger.h"
 #include "tiledb/sm/misc/utils.h"
 #include "tiledb/sm/storage_manager/storage_manager.h"
@@ -63,6 +64,8 @@ StorageManager::StorageManager() {
 }
 
 StorageManager::~StorageManager() {
+  globalState.unregister_storage_manager(this);
+
   async_stop();
   delete async_thread_;
   delete array_schema_cache_;
@@ -438,6 +441,10 @@ Status StorageManager::async_push_query(Query* query) {
   return Status::Ok();
 }
 
+Status StorageManager::cancel_all_tasks() {
+  return Status::Ok();
+}
+
 Config StorageManager::config() const {
   return config_;
 }
@@ -545,6 +552,9 @@ Status StorageManager::init(Config* config) {
   async_thread_ = new std::thread(async_start, this);
   vfs_ = new VFS();
   RETURN_NOT_OK(vfs_->init(config_.vfs_params()));
+
+  globalState.register_storage_manager(this);
+
   return Status::Ok();
 }
 

@@ -234,6 +234,9 @@ class StorageManager {
    */
   Status async_push_query(Query* query);
 
+  /** Cancels all background tasks. */
+  Status cancel_all_tasks();
+
   /** Returns the configuration parameters. */
   Config config() const;
 
