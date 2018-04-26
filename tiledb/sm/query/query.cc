@@ -84,6 +84,11 @@ const ArraySchema* Query::array_schema() const {
   return array_schema_;
 }
 
+Status Query::cancel() {
+  status_ = QueryStatus::FAILED;
+  return Status::Ok();
+}
+
 Status Query::process() {
   status_ = QueryStatus::INPROGRESS;
 
